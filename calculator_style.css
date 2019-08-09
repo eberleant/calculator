@@ -1,3 +1,4 @@
+/*Made by Evalyn Berleant*/
 body { /*webpage background color*/
 	background-color: cornsilk;
 	touch-action: manipulation; /*prevent double-tap -> zoom on mobile*/
@@ -10,7 +11,7 @@ div.calculator { /*div encompassing the whole calculator*/
 	background-color: #921818;
 	border: 10px solid #5d0000;
 	border-radius: 20px;
-	
+
 	/*center horizontally and vertically*/
 	position: absolute;
 	top: 50%;
