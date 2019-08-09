@@ -4,22 +4,18 @@ body {
 
 div.calculator {
 	width: 350px;
-	padding: 10px;
+	padding: 10px 0 0 0;
 	margin: 10vh auto;
-	background-color: #5d0000;
-}
-
-div.h1 {
 	background-color: #921818;
-	padding: 10px 0;
-	margin: 0;
-	text-align: center;
+	border: 10px solid #5d0000;
+	border-radius: 20px;
 }
 
 h1 {
+	text-align: center;
 	color: white;
 	font-family: system-ui;
-	font-size: 1em;
+	font-size: 1.5em;
 }
 
 div.display, div.buttons {
@@ -79,4 +75,20 @@ button span {
 	width: 165px;
 	background-color: #e6e6e6;
 	border-color: #989898;
+}
+
+.top-left {
+	border-radius: 10px 0 0 0;
+}
+
+.top-right {
+	border-radius: 0 10px 0 0;
+}
+
+.bottom-left {
+	border-radius: 0 0 0 10px;
+}
+
+.bottom-right {
+	border-radius: 0 0 10px 0;
 }
