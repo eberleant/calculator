@@ -84,7 +84,7 @@ function appendOperator(opClicked) {
 	} else if (rightSide.textContent === '') { //if there is no first operand, default = 0
 		firstOperand = '0';
 	} else { //transfer rightSide to firstOperand
-		firstOperand = round(rightSide.textContent, 13);
+		firstOperand = round(+rightSide.textContent, 13).toString();
 	}
 	rightSide.textContent = '';
 	updateLeft(opClicked);
@@ -94,7 +94,7 @@ function appendOperator(opClicked) {
 //called when equals is pressed
 function evaluate() {
 	if (!firstOperand || !rightSide.textContent || isNaN(rightSide.textContent)) return; //do nothing if there aren't two operands
-	rightSide.textContent = round(operate(operator, firstOperand, rightSide.textContent), 13); //round and show result in right side
+	rightSide.textContent = round(operate(operator, firstOperand, rightSide.textContent), 13).toString(); //round and show result in right side
 	firstOperand = '';
 	updateLeft('');
 	clearNext = true;
