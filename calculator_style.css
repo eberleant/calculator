@@ -30,7 +30,7 @@ div.display {
 	height: 55px;
 	border-radius: 10px;
 	outline: none;
-	font-family: "Courier New";
+	font-family: system-ui;
 	background-color: white;
 	white-space: nowrap;
 	padding: 0 10px;
