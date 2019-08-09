@@ -1,14 +1,21 @@
 body { /*webpage background color*/
 	background-color: cornsilk;
+	touch-action: manipulation; /*prevent double-tap -> zoom on mobile*/
 }
 
 div.calculator { /*div encompassing the whole calculator*/
 	width: 350px;
-	padding: 10px 0 0 0;
-	margin: 10vh auto;
+	height: 440px;
+	padding: 5px 0 0 0;
 	background-color: #921818;
 	border: 10px solid #5d0000;
 	border-radius: 20px;
+	
+	/*center horizontally and vertically*/
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin: -232.5px 0 0 -185px;
 }
 
 h1 { /*"Calculator" heading*/
