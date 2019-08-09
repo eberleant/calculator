@@ -49,14 +49,14 @@ window.addEventListener('keydown', pressButton);
 function pressButton(e) {
 	if (((e.keyCode === 56 || e.keyCode === 187) && e.shiftKey) || ((e.keyCode === 189 || e.keyCode === 191) && !e.shiftKey)) { //operator
 		operatorClick(e.key);
-	} else if (e.keyCode >= 48 && e.keyCode <= 57) { //number (already checked for *)
+	} else if (e.keyCode >= 48 && e.keyCode <= 57 && !e.shiftKey) { //number (already checked for *)
 		appendCharToDisplay(e.key);
 	} else if (e.keyCode === 8) { //delete triggered by backspace
 		del.click();
-	} else if (e.keyCode === 187 || e.keyCode === 13) { //equals triggered by = or enter
+	} else if (e.keyCode === 187 || e.keyCode === 13) { //equals triggered by = or enter (already checked for +)
 		e.preventDefault();
 		equals.click();
-	} else if (e.keyCode === 190) { //decimal triggered by period
+	} else if (e.keyCode === 190 && !e.shiftKey) { //decimal triggered by period
 		decimal.click();
 	} else if (e.keyCode === 27) { //clear triggered by escape
 		clear.click();
@@ -80,7 +80,8 @@ function appendCharToDisplay(char) {
 
 function operatorClick(opClicked) {
 	if (operator) {
-		if (opClicked !== '-' && rightSide.textContent === '') return; //if there is already an operator, do nothing (unless -)
+		//if there is already an operator, do nothing (unless '-'); do nothing also if the right side is not a number (it could be '-')
+		if ((opClicked !== '-' && (rightSide.textContent === '') || isNaN(rightSide.textContent))) return;
 		else if (rightSide.textContent === '') { //negative number
 			appendCharToDisplay('-');
 			return;
