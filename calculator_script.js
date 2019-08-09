@@ -1,56 +1,50 @@
+//allow . instead of 0.; make left side -> right side when being edited, add "e", add power
 let firstOperand;
-let secondOperand;
 let operator;
+//set to true after pressing '=', so that the next number pressed starts its own number (rather than adding onto the prev answer)
 let clearNext = false;
 const display = document.querySelector('.display');
-const leftSide = display.querySelector('.leftSide');
-const rightSide = display.querySelector('.rightSide');
-const numbers = Array.from(document.querySelectorAll('.number'));
-const operators = Array.from(document.querySelectorAll('.operator'));
-const equals = document.querySelector('.equals');
-const clear = document.querySelector('.clear');
-const del = document.querySelector('.delete');
-const decimal = document.querySelector('.decimal');
-
+const leftSide = display.querySelector('.leftSide'); //smaller text displaying stored number (aka first operand) and operator
+const rightSide = display.querySelector('.rightSide'); //larger text displaying number currently being edited
+const numbers = Array.from(document.querySelectorAll('.number')); //number buttons
+const operators = Array.from(document.querySelectorAll('.operator')); //operator buttons
+const equals = document.querySelector('.equals'); //equals button
+const clear = document.querySelector('.clear'); //clear button
+const del = document.querySelector('.delete'); //delete button
+const decimal = document.querySelector('.decimal'); //decimal point button
+//when a number button is pressed, append it to the display
 numbers.forEach(num => num.addEventListener('click', e => appendCharToDisplay(e.target.textContent)));
-
-operators.forEach(op => op.addEventListener('click', e => operatorClick(e.target.textContent)));
-
-equals.addEventListener('click', () => {
-	if (!firstOperand || !secondOperand) return;
-	firstOperand = operate(operator, firstOperand, secondOperand);
-	rightSide.textContent = firstOperand;
-	firstOperand = '';
-	secondOperand = '';
-	updateLeft('');
-	clearNext = true;
-});
-
+//when an operator button is pressed, append the operator
+operators.forEach(op => op.addEventListener('click', e => appendOperator(e.target.textContent)));
+//when equals is pressed, evaluate the answer based on the first operand, second operand, and operator
+equals.addEventListener('click', evaluate);
+//when clear is pressed, all stored information is reset
 clear.addEventListener('click', clearAll);
-
+//when delete is pressed, find the right-most section with characters and delete from it
 del.addEventListener('click', () => {
+	clearNext = false;
 	if (rightSide.textContent) {
 		rightSide.textContent = rightSide.textContent.slice(0, rightSide.textContent.length - 1);
-		secondOperand = rightSide.textContent;
-	} else if (operator) {
+	} else if (operator) { //transfer left side to right side if operator is deleted
 		updateLeft('');
-	} else {
-		leftSide.textContent = leftSide.textContent.slice(0, leftSide.textContent.length - 1);
-		firstOperand = leftSide.textContent;
+		rightSide.textContent = leftSide.textContent;
+		leftSide.textContent = '';
 	}
 });
-
+//when decimal is pressed, check if it would be a valid number before appending
 decimal.addEventListener('click', () => {
 	if (!isNaN(rightSide.textContent + '.')) {
 		appendCharToDisplay('.');
+	} else if (rightSide.textContent === '') {
+		appendCharToDisplay('0.');
 	}
 })
 
+//keyboard support!
 window.addEventListener('keydown', pressButton);
-
 function pressButton(e) {
 	if (((e.keyCode === 56 || e.keyCode === 187) && e.shiftKey) || ((e.keyCode === 189 || e.keyCode === 191) && !e.shiftKey)) { //operator
-		operatorClick(e.key);
+		appendOperator(e.key);
 	} else if (e.keyCode >= 48 && e.keyCode <= 57 && !e.shiftKey) { //number (already checked for *)
 		appendCharToDisplay(e.key);
 	} else if (e.keyCode === 8) { //delete triggered by backspace
@@ -65,57 +59,64 @@ function pressButton(e) {
 	}
 }
 
+//called when either a number or decimal point is pressed
 function appendCharToDisplay(char) {
-	if (!isNaN(leftSide.textContent) && leftSide.textContent !== '') { //no operator and not blank
-		if (leftSide.offsetWidth >= .9 * display.offsetWidth) return;
-		leftSide.textContent += char;
-		firstOperand = leftSide.textContent;
-		return;
-	}
-
-	if (rightSide.offsetWidth >= .9 * display.offsetWidth) return;
-	if (clearNext) {
-		clearAll();
-		clearNext = false;
-	}
+	if (rightSide.offsetWidth >= .9 * display.offsetWidth) return; //don't allow the text to go offscreen
+	//clearNext is set to true after pressing '=' and false after entering number, operator, or delete
+	if (clearNext) clearAll();
+	//append the character
 	rightSide.textContent += char;
-	if (firstOperand) {
-		secondOperand = rightSide.textContent;
-	}
 }
 
-function operatorClick(opClicked) {
+//called when operator is pressed
+function appendOperator(opClicked) {
+	//if there is already an operator, check if user could be trying to make a negative number
 	if (operator) {
-		//if there is already an operator, do nothing (unless '-'); do nothing also if the right side is not a number (it could be '-')
-		if ((opClicked !== '-' && (rightSide.textContent === '') || isNaN(rightSide.textContent))) return;
+		if ((opClicked !== '-' && rightSide.textContent === '') || isNaN(rightSide.textContent)) return;
 		else if (rightSide.textContent === '') { //negative number
 			appendCharToDisplay('-');
 			return;
 		}
 	}
 
-	if (firstOperand && secondOperand) { //chain of operations 
-		firstOperand = operate(operator, firstOperand, secondOperand);
-		secondOperand = '';
-	} else if (rightSide.textContent === '' && !firstOperand) { //if there is no first operand, default = 0
+	if (firstOperand && rightSide.textContent) { //chain of operations 
+		firstOperand = round(operate(operator, firstOperand, rightSide.textContent), 13);
+	} else if (rightSide.textContent === '') { //if there is no first operand, default = 0
 		firstOperand = '0';
-	} else if (!firstOperand) { //transfer rightSide to firstOperand
-		firstOperand = rightSide.textContent;
+	} else { //transfer rightSide to firstOperand
+		firstOperand = round(rightSide.textContent, 13);
 	}
 	rightSide.textContent = '';
 	updateLeft(opClicked);
 	clearNext = false;
 }
 
+//called when equals is pressed
+function evaluate() {
+	if (!firstOperand || !rightSide.textContent || isNaN(rightSide.textContent)) return; //do nothing if there aren't two operands
+	rightSide.textContent = round(operate(operator, firstOperand, rightSide.textContent), 13); //round and show result in right side
+	firstOperand = '';
+	updateLeft('');
+	clearNext = true;
+}
+
+//called when clear is pressed OR when a number/. is pressed and clearNext is true
 function clearAll() {
 	firstOperand = '';
 	updateLeft('');
 	rightSide.textContent = '';
+	clearNext = false;
 }
 
+//concatenates firstOperand and operator and puts the result in  left side
 function updateLeft(op) {
 	operator = op;
 	leftSide.textContent = firstOperand + op;
+}
+
+function round(number, places) {
+	let power = +('1e' + places);
+	return Math.round(number * power) / power;
 }
 
 function add(x, y) {
@@ -139,18 +140,17 @@ function divide(x, y) {
 }
 
 function operate(operator, x, y) {
-	if (!x) {
-		x = 0;
-	}
-	if (!y) {
-		y = 0;
-	}
+	//validity check (assigns 0 if invalid - or already 0)
+	x = +x;
+	y = +y;
+	if (!x) x = 0;
+	if (!y) y = 0;
 
 	switch(operator) {
-		case '+': return add(+x, +y).toString();
-		case '-': return subtract(+x, +y).toString();
-		case '*': return multiply(+x, +y).toString();
-		case '/': return divide(+x, +y).toString();
+		case '+': return add(x, y).toString();
+		case '-': return subtract(x, y).toString();
+		case '*': return multiply(x, y).toString();
+		case '/': return divide(x, y).toString();
 		default: return rightSide.textContent; //no operator, so no change
 	}
 }
