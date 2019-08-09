@@ -35,9 +35,10 @@ div.display {
 	font-family: system-ui;
 	padding: 0 10px;
 	background-color: white;
+	white-space: nowrap;
 }
 
-div .storedOp {
+div .leftSide {
 	float: left;
 	text-align: left;
 	color: gray;

@@ -1,8 +1,7 @@
 let firstOperand;
 let secondOperand;
 let operator;
-let clearOnNextNumber;
-const storedOp = document.querySelector('.storedOp');
+const leftSide = document.querySelector('.leftSide');
 const display = document.querySelector('.currentNum');
 const numbers = Array.from(document.querySelectorAll('.number'));
 const operators = Array.from(document.querySelectorAll('.operator'));
@@ -17,15 +16,26 @@ operators.forEach(op => op.addEventListener('click', e => operatorClick(e.target
 
 equals.addEventListener('click', () => {
 	decimal.disabled = false;
-	clearOnNextNumber = true;
-	display.textContent = operate(operator, firstOperand, secondOperand);
-	updateOperator('');
-	firstOperand = 0;
+	if (!firstOperand || !secondOperand) return;
+	firstOperand = operate(operator, firstOperand, secondOperand);
+	secondOperand = '';
+	display.textContent = '';
+	updateLeft('');
 });
 
 clear.addEventListener('click', clearAll);
 
-del.addEventListener('click', () => display.textContent = display.textContent.slice(0, display.textContent.length - 1));
+del.addEventListener('click', () => {
+	if (display.textContent) {
+		display.textContent = display.textContent.slice(0, display.textContent.length - 1);
+		secondOperand = display.textContent;
+	} else if (operator) {
+		updateLeft('');
+	} else {
+		leftSide.textContent = leftSide.textContent.slice(0, leftSide.textContent.length - 1);
+		firstOperand = leftSide.textContent;
+	}
+});
 
 decimal.addEventListener('click', () => {
 	appendCharToDisplay('.');
@@ -35,13 +45,14 @@ decimal.addEventListener('click', () => {
 window.addEventListener('keydown', pressButton);
 
 function pressButton(e) {
-	if (((e.keyCode === 56 || e.keyCode === 187) && e.shiftKey) || e.keyCode === 189 || e.keyCode === 191) { //operator
+	if (((e.keyCode === 56 || e.keyCode === 187) && e.shiftKey) || ((e.keyCode === 189 || e.keyCode === 191) && !e.shiftKey)) { //operator
 		operatorClick(e.key);
 	} else if (e.keyCode >= 48 && e.keyCode <= 57) { //number (already checked for *)
 		appendCharToDisplay(e.key);
 	} else if (e.keyCode === 8) { //delete triggered by backspace
 		del.click();
 	} else if (e.keyCode === 187 || e.keyCode === 13) { //equals triggered by = or enter
+		e.preventDefault();
 		equals.click();
 	} else if (e.keyCode === 190) { //decimal triggered by period
 		decimal.click();
@@ -50,39 +61,51 @@ function pressButton(e) {
 	}
 }
 
-function appendCharToDisplay(number) {
-	if (clearOnNextNumber) {
-		display.textContent = '';
+function appendCharToDisplay(char) {
+	if (!isNaN(leftSide.textContent) && leftSide.textContent !== '') { //no operator and not blank
+		leftSide.textContent += char;
+		firstOperand = leftSide.textContent;
+		return;
 	}
-	display.textContent += number;
+	display.textContent += char;
 	if (firstOperand) {
 		secondOperand = display.textContent;
 	}
-	clearOnNextNumber = false;
 }
 
 function operatorClick(opClicked) {
-	if (firstOperand) {
+	if (operator) {
+		if (opClicked !== '-' && display.textContent === '') return; //if there is already an operator, do nothing (unless -)
+		else if (display.textContent === '') { //negative number
+			appendCharToDisplay('-');
+			return;
+		}
+	}
+
+	if (firstOperand && secondOperand) { //chain of operations 
 		firstOperand = operate(operator, firstOperand, secondOperand);
-	}else {
+		secondOperand = '';
+	} else if (display.textContent === '' && !firstOperand) { //if there is no first operand, default = 0
+		firstOperand = '0';
+	} else if (!firstOperand) { //transfer display to firstOperand
 		firstOperand = display.textContent;
 	}
 	decimal.disabled = false;
-	clearOnNextNumber = true;
-	updateOperator(opClicked);
+	display.textContent = '';
+	updateLeft(opClicked);
 }
 
 function clearAll() {
 	firstOperand = '';
-	updateOperator('');
+	updateLeft('');
 	display.textContent = '';
 	decimal.disabled = false;
 	clearOnNextNumber = true;
 }
 
-function updateOperator(op) {
+function updateLeft(op) {
 	operator = op;
-	storedOp.textContent = op;
+	leftSide.textContent = firstOperand + op;
 }
 
 function add(x, y) {
@@ -106,13 +129,18 @@ function divide(x, y) {
 }
 
 function operate(operator, x, y) {
-	if (!x) x = 0;
-	if (!y) y = 0;
+	if (!x) {
+		x = 0;
+	}
+	if (!y) {
+		y = 0;
+	}
+
 	switch(operator) {
-		case '+': return add(+x, +y);
-		case '-': return subtract(+x, +y);
-		case '*': return multiply(+x, +y);
-		case '/': return divide(+x, +y);
+		case '+': return add(+x, +y).toString();
+		case '-': return subtract(+x, +y).toString();
+		case '*': return multiply(+x, +y).toString();
+		case '/': return divide(+x, +y).toString();
 		default: return display.textContent; //no operator, so no change
 	}
 }
