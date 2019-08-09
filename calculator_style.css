@@ -25,22 +25,28 @@ div.display, div.buttons {
 
 div.display {
 	box-sizing: border-box;
+	position: relative;
 	width: 300px;
 	height: 55px;
-	line-height: 55px;
 	border-radius: 10px;
-	text-align: right;
-	font-size: 1.5em;
 	outline: none;
-	font-family: system-ui;
-	padding: 0 10px;
+	font-family: "Courier New";
 	background-color: white;
 	white-space: nowrap;
+	padding: 0 10px;
+	text-align: right;
+}
+
+div .rightSide {
+	line-height: 55px;
+	font-size: 1.5em;
 }
 
 div .leftSide {
-	float: left;
-	text-align: left;
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	font-size: .8em;
 	color: gray;
 }
 

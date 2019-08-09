@@ -1,8 +1,9 @@
 let firstOperand;
 let secondOperand;
 let operator;
-const leftSide = document.querySelector('.leftSide');
-const display = document.querySelector('.currentNum');
+const display = document.querySelector('.display');
+const leftSide = display.querySelector('.leftSide');
+const rightSide = display.querySelector('.rightSide');
 const numbers = Array.from(document.querySelectorAll('.number'));
 const operators = Array.from(document.querySelectorAll('.operator'));
 const equals = document.querySelector('.equals');
@@ -19,16 +20,16 @@ equals.addEventListener('click', () => {
 	if (!firstOperand || !secondOperand) return;
 	firstOperand = operate(operator, firstOperand, secondOperand);
 	secondOperand = '';
-	display.textContent = '';
+	rightSide.textContent = '';
 	updateLeft('');
 });
 
 clear.addEventListener('click', clearAll);
 
 del.addEventListener('click', () => {
-	if (display.textContent) {
-		display.textContent = display.textContent.slice(0, display.textContent.length - 1);
-		secondOperand = display.textContent;
+	if (rightSide.textContent) {
+		rightSide.textContent = rightSide.textContent.slice(0, rightSide.textContent.length - 1);
+		secondOperand = rightSide.textContent;
 	} else if (operator) {
 		updateLeft('');
 	} else {
@@ -63,20 +64,23 @@ function pressButton(e) {
 
 function appendCharToDisplay(char) {
 	if (!isNaN(leftSide.textContent) && leftSide.textContent !== '') { //no operator and not blank
+		if (leftSide.offsetWidth >= .9 * display.offsetWidth) return;
 		leftSide.textContent += char;
 		firstOperand = leftSide.textContent;
 		return;
 	}
-	display.textContent += char;
+
+	if (rightSide.offsetWidth >= .9 * display.offsetWidth) return;
+	rightSide.textContent += char;
 	if (firstOperand) {
-		secondOperand = display.textContent;
+		secondOperand = rightSide.textContent;
 	}
 }
 
 function operatorClick(opClicked) {
 	if (operator) {
-		if (opClicked !== '-' && display.textContent === '') return; //if there is already an operator, do nothing (unless -)
-		else if (display.textContent === '') { //negative number
+		if (opClicked !== '-' && rightSide.textContent === '') return; //if there is already an operator, do nothing (unless -)
+		else if (rightSide.textContent === '') { //negative number
 			appendCharToDisplay('-');
 			return;
 		}
@@ -85,20 +89,20 @@ function operatorClick(opClicked) {
 	if (firstOperand && secondOperand) { //chain of operations 
 		firstOperand = operate(operator, firstOperand, secondOperand);
 		secondOperand = '';
-	} else if (display.textContent === '' && !firstOperand) { //if there is no first operand, default = 0
+	} else if (rightSide.textContent === '' && !firstOperand) { //if there is no first operand, default = 0
 		firstOperand = '0';
-	} else if (!firstOperand) { //transfer display to firstOperand
-		firstOperand = display.textContent;
+	} else if (!firstOperand) { //transfer rightSide to firstOperand
+		firstOperand = rightSide.textContent;
 	}
 	decimal.disabled = false;
-	display.textContent = '';
+	rightSide.textContent = '';
 	updateLeft(opClicked);
 }
 
 function clearAll() {
 	firstOperand = '';
 	updateLeft('');
-	display.textContent = '';
+	rightSide.textContent = '';
 	decimal.disabled = false;
 	clearOnNextNumber = true;
 }
@@ -141,6 +145,6 @@ function operate(operator, x, y) {
 		case '-': return subtract(+x, +y).toString();
 		case '*': return multiply(+x, +y).toString();
 		case '/': return divide(+x, +y).toString();
-		default: return display.textContent; //no operator, so no change
+		default: return rightSide.textContent; //no operator, so no change
 	}
 }
