@@ -1,6 +1,7 @@
 let firstOperand;
 let secondOperand;
 let operator;
+let clearNext = false;
 const display = document.querySelector('.display');
 const leftSide = display.querySelector('.leftSide');
 const rightSide = display.querySelector('.rightSide');
@@ -16,13 +17,13 @@ numbers.forEach(num => num.addEventListener('click', e => appendCharToDisplay(e.
 operators.forEach(op => op.addEventListener('click', e => operatorClick(e.target.textContent)));
 
 equals.addEventListener('click', () => {
-	decimal.disabled = false;
 	if (!firstOperand || !secondOperand) return;
 	firstOperand = operate(operator, firstOperand, secondOperand);
 	rightSide.textContent = firstOperand;
 	firstOperand = '';
 	secondOperand = '';
 	updateLeft('');
+	clearNext = true;
 });
 
 clear.addEventListener('click', clearAll);
@@ -40,8 +41,9 @@ del.addEventListener('click', () => {
 });
 
 decimal.addEventListener('click', () => {
-	appendCharToDisplay('.');
-	decimal.disabled = true;
+	if (!isNaN(rightSide.textContent + '.')) {
+		appendCharToDisplay('.');
+	}
 })
 
 window.addEventListener('keydown', pressButton);
@@ -72,6 +74,10 @@ function appendCharToDisplay(char) {
 	}
 
 	if (rightSide.offsetWidth >= .9 * display.offsetWidth) return;
+	if (clearNext) {
+		clearAll();
+		clearNext = false;
+	}
 	rightSide.textContent += char;
 	if (firstOperand) {
 		secondOperand = rightSide.textContent;
@@ -96,17 +102,15 @@ function operatorClick(opClicked) {
 	} else if (!firstOperand) { //transfer rightSide to firstOperand
 		firstOperand = rightSide.textContent;
 	}
-	decimal.disabled = false;
 	rightSide.textContent = '';
 	updateLeft(opClicked);
+	clearNext = false;
 }
 
 function clearAll() {
 	firstOperand = '';
 	updateLeft('');
 	rightSide.textContent = '';
-	decimal.disabled = false;
-	clearOnNextNumber = true;
 }
 
 function updateLeft(op) {

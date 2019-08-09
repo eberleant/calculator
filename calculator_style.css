@@ -3,7 +3,7 @@ body {
 }
 
 div.calculator {
-	width: 320px;
+	width: 350px;
 	padding: 10px;
 	margin: 10vh auto;
 	background-color: #5d0000;
@@ -23,14 +23,13 @@ h1 {
 }
 
 div.display, div.buttons {
-	width: 300px;
+	width: 330px;
 	margin: 10px;
 }
 
 div.display {
 	box-sizing: border-box;
 	position: relative;
-	width: 300px;
 	height: 55px;
 	border-radius: 10px;
 	outline: none;
@@ -58,7 +57,7 @@ button {
 	-webkit-appearance: none;
 	outline: none;
 	box-sizing: border-box;
-	width: 100px;
+	width: 110px;
 	height: 55px;
 	font-size: 1.5em;
 	background-color: #f0f2ff;
@@ -71,13 +70,13 @@ button span {
 }
 
 .operator {
-	width: 75px;
+	width: 82.5px;
 	background-color: #fff7ee;
 	border-color: #e4ba3c;
 }
 
 .clear, .delete {
-	width: 150px;
+	width: 165px;
 	background-color: #e6e6e6;
 	border-color: #989898;
 }
