@@ -1,4 +1,4 @@
-//allow . instead of 0.; make left side -> right side when being edited, add "e", add power
+//Made by Evalyn Berleant
 let firstOperand;
 let operator;
 //set to true after pressing '=', so that the next number pressed starts its own number (rather than adding onto the prev answer)
