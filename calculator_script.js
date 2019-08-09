@@ -19,8 +19,9 @@ equals.addEventListener('click', () => {
 	decimal.disabled = false;
 	if (!firstOperand || !secondOperand) return;
 	firstOperand = operate(operator, firstOperand, secondOperand);
+	rightSide.textContent = firstOperand;
+	firstOperand = '';
 	secondOperand = '';
-	rightSide.textContent = '';
 	updateLeft('');
 });
 
