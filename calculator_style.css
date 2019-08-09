@@ -1,8 +1,8 @@
-body {
+body { /*webpage background color*/
 	background-color: cornsilk;
 }
 
-div.calculator {
+div.calculator { /*div encompassing the whole calculator*/
 	width: 350px;
 	padding: 10px 0 0 0;
 	margin: 10vh auto;
@@ -11,21 +11,21 @@ div.calculator {
 	border-radius: 20px;
 }
 
-h1 {
+h1 { /*"Calculator" heading*/
 	text-align: center;
 	color: white;
 	font-family: system-ui;
 	font-size: 1.5em;
 }
 
-div.display, div.buttons {
+div.display, div.buttons { /*divs encompassing the number display and the buttons section of the calc*/
 	width: 330px;
 	margin: 10px;
 }
 
-div.display {
+div.display { /*div encompassing the number display*/
 	box-sizing: border-box;
-	position: relative;
+	position: relative; /*allows .leftSide's "absolute" positioning to be relative to the number display instead of the webpage*/
 	height: 55px;
 	border-radius: 10px;
 	outline: none;
@@ -36,12 +36,12 @@ div.display {
 	text-align: right;
 }
 
-div .rightSide {
+div .rightSide { /*main number display*/
 	line-height: 55px;
 	font-size: 1.5em;
 }
 
-div .leftSide {
+div .leftSide { /*displays stored number and operator*/
 	position: absolute;
 	top: 5px;
 	left: 5px;
@@ -49,7 +49,7 @@ div .leftSide {
 	color: gray;
 }
 
-button {
+button { /*each button's default styling*/
 	-webkit-appearance: none;
 	outline: none;
 	box-sizing: border-box;
@@ -60,35 +60,35 @@ button {
 	border-color: #a49ede;
 }
 
-button span {
+button span { /*smaller text (describing keyboard shortcut when it isn't self explanatory)*/
 	font-size: .5em;
 	color: gray;
 }
 
-.operator {
+.operator { /*special styling for the operator buttons*/
 	width: 82.5px;
 	background-color: #fff7ee;
 	border-color: #e4ba3c;
 }
 
-.clear, .delete {
+.clear, .delete { /*special styling for clear/delete buttons*/
 	width: 165px;
 	background-color: #e6e6e6;
 	border-color: #989898;
 }
 
-.top-left {
+.top-left { /*special styling for top left button (rounded corner)*/
 	border-radius: 10px 0 0 0;
 }
 
-.top-right {
+.top-right { /*special styling for top right button (rounded corner)*/
 	border-radius: 0 10px 0 0;
 }
 
-.bottom-left {
+.bottom-left { /*special styling for bottom left button (rounded corner)*/
 	border-radius: 0 0 0 10px;
 }
 
-.bottom-right {
+.bottom-right { /*special styling for bottom right button (rounded corner)*/
 	border-radius: 0 0 10px 0;
 }
