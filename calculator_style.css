@@ -37,6 +37,12 @@ div.display {
 	background-color: white;
 }
 
+div .storedOp {
+	float: left;
+	text-align: left;
+	color: gray;
+}
+
 button {
 	-webkit-appearance: none;
 	outline: none;

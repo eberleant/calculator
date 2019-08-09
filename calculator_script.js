@@ -2,7 +2,8 @@ let firstOperand;
 let secondOperand;
 let operator;
 let clearOnNextNumber;
-const display = document.querySelector('.display');
+const storedOp = document.querySelector('.storedOp');
+const display = document.querySelector('.currentNum');
 const numbers = Array.from(document.querySelectorAll('.number'));
 const operators = Array.from(document.querySelectorAll('.operator'));
 const equals = document.querySelector('.equals');
@@ -18,6 +19,7 @@ equals.addEventListener('click', () => {
 	decimal.disabled = false;
 	clearOnNextNumber = true;
 	display.textContent = operate(operator, firstOperand, secondOperand);
+	updateOperator('');
 	firstOperand = 0;
 });
 
@@ -67,15 +69,20 @@ function operatorClick(opClicked) {
 	}
 	decimal.disabled = false;
 	clearOnNextNumber = true;
-	operator = opClicked;
+	updateOperator(opClicked);
 }
 
 function clearAll() {
 	firstOperand = '';
-	operator = '';
+	updateOperator('');
 	display.textContent = '';
 	decimal.disabled = false;
 	clearOnNextNumber = true;
+}
+
+function updateOperator(op) {
+	operator = op;
+	storedOp.textContent = op;
 }
 
 function add(x, y) {
@@ -106,6 +113,6 @@ function operate(operator, x, y) {
 		case '-': return subtract(+x, +y);
 		case '*': return multiply(+x, +y);
 		case '/': return divide(+x, +y);
-		default: return y; //no operator
+		default: return display.textContent; //no operator, so no change
 	}
 }
