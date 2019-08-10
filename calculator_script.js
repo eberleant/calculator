@@ -23,7 +23,8 @@ clear.addEventListener('click', clearAll);
 //when delete is pressed, find the right-most section with characters and delete from it
 del.addEventListener('click', () => {
 	clearNext = false;
-	if (rightSide.textContent) {
+	if (isNaN(rightSide.textContent)) clearAll();
+	else if (rightSide.textContent) {
 		rightSide.textContent = rightSide.textContent.slice(0, rightSide.textContent.length - 1);
 	} else if (operator) { //transfer left side to right side if operator is deleted
 		updateLeft('');
@@ -33,11 +34,9 @@ del.addEventListener('click', () => {
 });
 //when decimal is pressed, check if it would be a valid number before appending
 decimal.addEventListener('click', () => {
-	if (!isNaN(rightSide.textContent + '.')) {
-		appendCharToDisplay('.');
-	} else if (rightSide.textContent === '') {
-		appendCharToDisplay('0.');
-	}
+	if (isNaN(rightSide.textContent)) clearAll();
+	if (!isNaN(rightSide.textContent + '.')) appendCharToDisplay('.');
+	else if (rightSide.textContent === '') appendCharToDisplay('0.');
 })
 
 //keyboard support!
@@ -63,13 +62,14 @@ function pressButton(e) {
 function appendCharToDisplay(char) {
 	if (rightSide.offsetWidth >= .9 * display.offsetWidth) return; //don't allow the text to go offscreen
 	//clearNext is set to true after pressing '=' and false after entering number, operator, or delete
-	if (clearNext) clearAll();
+	if (clearNext || isNaN(rightSide.textContent)) clearAll();
 	//append the character
 	rightSide.textContent += char;
 }
 
 //called when operator is pressed
 function appendOperator(opClicked) {
+	if (isNaN(rightSide.textContent)) clearAll();
 	//if there is already an operator, check if user could be trying to make a negative number
 	if (operator) {
 		if ((opClicked !== '-' && rightSide.textContent === '') || isNaN(rightSide.textContent)) return;
@@ -84,7 +84,7 @@ function appendOperator(opClicked) {
 	} else if (rightSide.textContent === '') { //if there is no first operand, default = 0
 		firstOperand = '0';
 	} else { //transfer rightSide to firstOperand
-		firstOperand = round(+rightSide.textContent, 13).toString();
+		firstOperand = round(rightSide.textContent, 13).toString();
 	}
 	rightSide.textContent = '';
 	updateLeft(opClicked);
@@ -115,8 +115,9 @@ function updateLeft(op) {
 }
 
 function round(number, places) {
+	if (isNaN(number)) return number;
 	let power = +('1e' + places);
-	return Math.round(number * power) / power;
+	return Math.round(+number * power) / power;
 }
 
 function add(x, y) {
@@ -134,18 +135,15 @@ function multiply(x, y) {
 function divide(x, y) {
 	if (y === 0) {
 		clearAll();
-		return 'LOL, nice try! ;)';
+		rightSide.textContent = 'LOL, nice try! ;)';
+		return;
 	}
 	return x / y;
 }
 
 function operate(operator, x, y) {
-	//validity check (assigns 0 if invalid - or already 0)
 	x = +x;
 	y = +y;
-	if (!x) x = 0;
-	if (!y) y = 0;
-
 	switch(operator) {
 		case '+': return add(x, y).toString();
 		case '-': return subtract(x, y).toString();
